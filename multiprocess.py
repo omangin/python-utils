@@ -14,8 +14,10 @@ class RepeatPool:
     random state in each process.
     """
 
-    def __init__(self, target):
-        self.n_processes = cpu_count()
+    def __init__(self, target, n_processes=None):
+        if n_processes is None:
+            n_processes = cpu_count()
+        self.n_processes = n_processes
         self.target = target
 
     def work(self, seed):
@@ -67,12 +69,12 @@ class RepeatPool:
                         if w is None else w for w in self.workers]
 
 
-def repeat(func, n):
+def repeat(func, n, n_processes=None):
     """Repeats calls to func n times in separate process.
 
     See RepeatPool for implementation.
     """
-    p = RepeatPool(func)
+    p = RepeatPool(func, n_processes=n_processes)
     return p.run(n)
 
 
